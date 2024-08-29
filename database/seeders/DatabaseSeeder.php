@@ -29,35 +29,46 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'first_name' => 'Member 1',
-            'last_name' => 'User',
+            'first_name' => 'Lewis',
+            'last_name' => 'Brown',
             'age' => 40,
-            'phone' => '123213213',
-            'address' => '13 asdsads asd',
-            'prof_summary' => 'asdas das dsad sadas dsa dsa',
+            'phone' => '1230986',
+            'address' => '55 Brown St',
+            'prof_summary' => 'Information',
             'email' => 'member1@example.com',
             'password' => Hash::make('password'),
         ]);
 
         User::create([
-            'first_name' => 'Member 2',
-            'last_name' => 'User',
+            'first_name' => 'Jacob',
+            'last_name' => 'White',
             'age' => 40,
-            'phone' => '123213213',
-            'address' => '13 asdsads asd',
-            'prof_summary' => 'asdas das dsad sadas dsa dsa',
+            'phone' => '12321321222',
+            'address' => '2 High St',
+            'prof_summary' => 'Info',
             'email' => 'member2@example.com',
             'password' => Hash::make('password'),
         ]);
 
         User::create([
-            'first_name' => 'Member 3',
-            'last_name' => 'User',
+            'first_name' => 'Jhon',
+            'last_name' => 'Smith',
             'age' => 40,
             'phone' => '123213213',
-            'address' => '13 asdsads asd',
-            'prof_summary' => 'asdas das dsad sadas dsa dsa',
+            'address' => '25 Brown St',
+            'prof_summary' => 'info',
             'email' => 'member3@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        User::create([
+            'first_name' => 'Luis',
+            'last_name' => 'Smith',
+            'age' => 40,
+            'phone' => '123213213',
+            'address' => '13 Stirling St',
+            'prof_summary' => 'Information',
+            'email' => 'member4@example.com',
             'password' => Hash::make('password'),
         ]);
 

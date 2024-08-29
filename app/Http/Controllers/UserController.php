@@ -171,7 +171,7 @@ class UserController extends Controller
                              ->withInput();
         }
     }
-
+// log out / verifica tgoken y te lleva a login 
     public function logoutSubmit(Request $request)
     {
         if(!$this->verifyToken($request)) {
@@ -179,7 +179,7 @@ class UserController extends Controller
         }
 
         $user = $request->user;
-
+// aca es para actulizar la base de datos. al hacer logout borra el api token 
         $user->api_token = null;
         $user->save();
 
@@ -209,7 +209,7 @@ class UserController extends Controller
 
         return view('aboutus', compact('user', 'api_token')); 
     }
-
+// aca es para verificar que existe el token. va a estar en todos los metodos 
     public function verifyToken (Request $request)
     {
         $api_token=$request->get('api_token'); 
@@ -220,7 +220,7 @@ class UserController extends Controller
             $userId = $tokenParts[0];
 
             $user = User::find($userId);
-
+// si el usuario se logueo, se guarda el usuario en el objeto $request  
             if ($user['api_token'] == $api_token){
                 $request->user = $user;
                 $request->api_token = $api_token;
