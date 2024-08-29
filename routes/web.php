@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,42 +15,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/* Route::get('/', function () {
-    return view('welcome');
-}); */
-Route::redirect('/', '/dashboard');
+Route::get('/', [UserController::class, 'index'])->name('dashboard');
 
+Route::get('/events', [UserController::class, 'eventsView'])->name('events');
 
-Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
-
-Route::get('/events', function () {
-    return view('events');
-})->name('events');
+Route::get('/aboutus', [UserController::class, 'aboutusView'])->name('aboutus');
 
 Route::get('/createuser', [UserController::class, 'createUserView'])->name('createuser');
 
 Route::post('/createuser', [UserController::class, 'store'])->name('createuser');
 
-Route::get('/aboutus', function () {
-    return view('aboutus');
-})->name('aboutus');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'delete'])->name('profile.delete');
-});
-
-require __DIR__.'/auth.php';
 
 Route::get('/usersedit/{id}', [UserController::class, 'edit'])->name('users.edit');
 
-Route::put('/usersedit/{id}', [UserController::class, 'update'])->name('users.edit');
-
-
-
-Route::resource('users', UserController::class);
+Route::put('/usersedit/{id}', [UserController::class, 'update'])->name('users.update');
 
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.delete');
 
-Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::get('login', [UserController::class, 'loginView'])->name('login');
+Route::post('logout', [UserController::class, 'logoutSubmit'])->name('logout');
+Route::post('login', [UserController::class, 'loginSubmit']);

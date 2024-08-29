@@ -5,17 +5,17 @@
             <div class="flex">
                
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('dashboard', ['api_token' => $api_token]) }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
               
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('dashboard', ['api_token' => $api_token])" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('events')" :active="request()->routeIs('events')">
+                    <x-nav-link :href="route('events', ['api_token' => $api_token])" :active="request()->routeIs('events')">
                         {{ __('Events') }}
                     </x-nav-link>
                     @if($user->admin)
@@ -23,7 +23,7 @@
                             {{ __('Create User') }}  
                         </x-nav-link>
                     @endif
-                    <x-nav-link :href="route('aboutus')" :active="request()->routeIs('aboutus')">
+                    <x-nav-link :href="route('aboutus', ['api_token' => $api_token])" :active="request()->routeIs('aboutus')">
                         {{ __('About us') }}
                     </x-nav-link>
                     
@@ -46,14 +46,9 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                       
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
+                            <input type="hidden" value="{{$api_token}}" name="api_token"/>
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
@@ -79,7 +74,35 @@
 
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('dashboard', ['api_token' => $api_token])" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('events', ['api_token' => $api_token])" :active="request()->routeIs('events')">
+                {{ __('Events') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('createuser', ['api_token' => $api_token])" :active="request()->routeIs('createuser')">
+                {{ __('Create User') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard', ['api_token' => $api_token])" :active="request()->routeIs('dashboard')">
+                {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+
+            <x-nav-link :href="route('events', ['api_token' => $api_token])" :active="request()->routeIs('events')">
+                {{ __('Events') }}
+            </x-nav-link>
+            @if($user->admin)
+                <x-nav-link :href="route('createuser', ['api_token' => $api_token])" :active="request()->routeIs('createuser')">
+                    {{ __('Create User') }}  
+                </x-nav-link>
+            @endif
+            <x-nav-link :href="route('aboutus', ['api_token' => $api_token])" :active="request()->routeIs('aboutus')">
+                {{ __('About us') }}
+            </x-nav-link>
+        </div>
+
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard', ['api_token' => $api_token])" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
@@ -91,11 +114,6 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-             
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 

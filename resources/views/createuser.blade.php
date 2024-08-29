@@ -8,6 +8,7 @@
             <form action="{{ route('createuser') }}" method="POST">
                 @csrf
                 
+                <input type="hidden" value="{{$api_token}}" name="api_token"/>
              
                     <!-- First Name -->
                     <div>

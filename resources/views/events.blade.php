@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout :$user :$api_token>
 
  
 

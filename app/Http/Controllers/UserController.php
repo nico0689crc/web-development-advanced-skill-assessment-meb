@@ -12,14 +12,30 @@ use Illuminate\View\View;
 use App\Models\User;
 class UserController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+    public function index(Request $request)
+    {
+        if(!$this->verifyToken($request)) {
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token;
+
+        if(!$user->admin)
+        {
+            return view('memberdashboard', compact('user', 'api_token'));  
+        }
+
+        $users = User::all();
+
+        return view('dashboard', compact('users', 'user', 'api_token')); 
+    }
+
     public function createUserView(Request $request)
     {
 
-        if(!$this->islogedIn($request)){
-            return "not logged in";
+        if(!$this->verifyToken($request)){
+            return redirect()->route('login');
         }
 
         $user = $request->user;
@@ -27,11 +43,16 @@ class UserController extends Controller
 
         return view('createuser', compact('user', 'api_token') );
     }
-
   
     public function store(Request $request) {
-        // user::create($user);
     
+        if(!$this->verifyToken($request)){
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token; 
+
         $user = User::create([
             'first_name'=> $request->first_name,
             'last_name' =>$request->last_name,
@@ -43,20 +64,7 @@ class UserController extends Controller
             'prof_summary' =>$request->professional_summary   
 
         ]);
-        return redirect()->route('dashboard')->with('success', 'User created Successfully');
-        
-
-    }
-
-    public function index()
-    {
-        $user = auth()->user();
-        if(!$user->admin)
-        {
-        return view('profile.userdashboard', compact('user'));  
-        }
-        $users = User::all();
-        return view('dashboard', compact('users')); 
+        return redirect()->route('dashboard', ['api_token' => $api_token])->with('success', 'User created Successfully');
     }
 
     public function show($id)
@@ -65,14 +73,28 @@ class UserController extends Controller
         return view('users.show', compact('user')); // Pass user data to the view
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $user = User::findOrFail($id); // Retrieve the user by ID
-        return view('usersedit', compact('user')); // Pass user data to the edit view
+        if(!$this->verifyToken($request)) {
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token;
+
+        $user_edit = User::findOrFail($id); 
+        return view('usersedit', compact('user_edit', 'api_token', 'user'));
     }
 
     public function update(Request $request, $id)
     {
+        if(!$this->verifyToken($request)){
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token; 
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -92,34 +114,122 @@ class UserController extends Controller
         $user->prof_summary = $request->prof_summary;
         $user->save(); // Save changes
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.'); // Redirect with success message
+        return redirect()->route('dashboard', ['api_token' => $api_token])->with('success', 'User updated successfully.'); // Redirect with success message
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        if(!$this->verifyToken($request)){
+            return redirect()->route('login');
+        }
+
+        $api_token = $request->api_token; 
+
         $user = User::findOrFail($id);
         $user->delete();
     
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('dashboard', ['api_token' => $api_token])->with('success', 'User deleted successfully.');
     }
 
-    public function islogedIn (Request $request){
+    public function loginView(): View
+    {
+        return view('auth.login');
+    }
+
+    public function loginSubmit(Request $request)
+    {
+        $email = $request->get('email');
+        $password = $request->get('password');
+    
+        // find user by email
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->back()
+                             ->withErrors(["email" => "These credentials do not match our records."])
+                             ->withInput();
+        }
+
+        // verify password
+        if (Hash::check($password, $user->password)) {
+            // Generate the API token
+            $api_token = base64_encode($user->id . '|' . time());
+            
+            // Update the user's api_token
+            $user->api_token = $api_token;
+            $user->save();
+        
+            // Retrieve all users
+            $users = User::where('admin', 0)->get();
+        
+            // Pass the users and api_token to the view
+            // Pass user that is the authenticated user.
+            return redirect('/?api_token='.$api_token);
+        } else {
+            return redirect()->back()
+                             ->withErrors(["email" => "These credentials do not match our records."])
+                             ->withInput();
+        }
+    }
+
+    public function logoutSubmit(Request $request)
+    {
+        if(!$this->verifyToken($request)) {
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+
+        $user->api_token = null;
+        $user->save();
+
+        return redirect()->route('login');
+    }
+
+    public function eventsView(Request $request)
+    {
+        if(!$this->verifyToken($request)) {
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token;
+
+        return view('events', compact('user', 'api_token')); 
+    }
+
+    public function aboutusView(Request $request)
+    {
+        if(!$this->verifyToken($request)) {
+            return redirect()->route('login');
+        }
+
+        $user = $request->user;
+        $api_token = $request->api_token;
+
+        return view('aboutus', compact('user', 'api_token')); 
+    }
+
+    public function verifyToken (Request $request)
+    {
         $api_token=$request->get('api_token'); 
 
-        if ($api_token){
+        if ($api_token) {
             $tokenParts = explode('|', base64_decode($api_token));
 
             $userId = $tokenParts[0];
 
-            // fins the user by ID
             $user = User::find($userId);
 
-            if ($user['api_token']!=null){
+            if ($user['api_token'] == $api_token){
                 $request->user = $user;
+                $request->api_token = $api_token;
                 return true;
             }else{
                 return false;
             }
+        } else {
+            return false;
         }
     }
 }

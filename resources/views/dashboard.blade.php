@@ -40,18 +40,15 @@
                         <td class="py-3 px-4 text-gray-600">{{ $user->phone }}</td>
                         <td class="py-3 px-4 text-gray-600">{{ $user->prof_summary }}</td>
                         <td class="py-3 px-4 flex space-x-4">
-                        <a href={{route('users.edit', ['user' => $user->id, 'api_token' => $api_token])}} class="text-blue-500 hover:underline">Edit</a>
-             <!-- Delete Button -->
-             <form action="{{ route('users.delete', $user->id) }}" method="POST" class="inline">
-                @csrf
-                @method('delete')
-                <input type="hidden" name="api_token" value="{{$api_token}}"/>
-                <button type="submit" class="text-red-500 hover:underline ml-4">Delete</button>
-            </form>
-                    <!-- Edit Button -->
-                  
+                        <a href={{route('users.edit', ['id' => $user->id, 'api_token' => $api_token])}} class="text-blue-500 hover:underline">Edit</a>
+                        <form action="{{ route('users.delete', $user->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('delete')
+                            <input type="hidden" name="api_token" value="{{$api_token}}"/>
+                            <button type="submit" class="text-red-500 hover:underline ml-4">Delete</button>
+                        </form>
+                    </tr>
                 @endforeach
-            
             </tbody>
         </table>
     </div>
