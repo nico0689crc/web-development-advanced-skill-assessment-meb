@@ -1,0 +1,11 @@
+para entrar a la carpeta: cd .\project-app\
+PS C:\Users\Maria\Desktop\SkillAssesmentAdvWeb\project-app> php artisan serve
+
+si no me carga el CSS: PS C:\Users\Maria\Desktop\SkillAssesmentAdvWeb\project-app> npm run dev
+
+PARA MODIFICAR LA BASE DE DATOS: 
+PS C:\Users\Maria\Desktop\SkillAssesmentAdvWeb\project-app> php artisan migrate:rollback
+PS C:\Users\Maria\Desktop\SkillAssesmentAdvWeb\project-app> php artisan migrate 
+
+PARA RUN SEED
+php artisan db:seed
